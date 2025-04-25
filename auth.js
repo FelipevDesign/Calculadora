@@ -24,7 +24,7 @@ if (typeof firebase === 'undefined' || !firebase.app()) {
                 // Cadastro bem-sucedido, usuário logado automaticamente
                 console.log("Usuário cadastrado:", userCredential.user);
                 // Redireciona para a calculadora principal
-                window.location.href = 'index_updated.html';
+                window.location.href = 'index.html';
             })
             .catch((error) => {
                 console.error("Erro no cadastro:", error);
@@ -42,7 +42,7 @@ if (typeof firebase === 'undefined' || !firebase.app()) {
                 // Login bem-sucedido
                 console.log("Usuário logado:", userCredential.user);
                 // Redireciona para a calculadora principal
-                window.location.href = 'index_updated.html';
+                window.location.href = 'index.html';
             })
             .catch((error) => {
                 console.error("Erro no login:", error);
