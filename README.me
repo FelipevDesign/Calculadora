@@ -1,0 +1,188 @@
+# Documentação - Calculadora Rocharts de Precificação
+
+## 1. Visão Geral
+
+A Calculadora Rocharts é uma ferramenta web desenvolvida para auxiliar artesãos, especialmente joalheiros que trabalham com cobre e outros materiais, a calcular de forma detalhada e precisa o preço final de suas peças. Ela considera diversos fatores de custo, desde materiais diretos e mão de obra até despesas indiretas, taxas e margem de lucro desejada.
+
+A aplicação funciona inteiramente no navegador do usuário, utilizando o `localStorage` para salvar cálculos, equipamentos e configurações, garantindo que os dados persistam entre as sessões sem a necessidade de um backend ou banco de dados externo.
+
+## 2. Funcionalidades Principais
+
+*   **Precificação Detalhada:**
+    *   Custo de materiais (Cobre, Pedras, Conchas/Fósseis, Consumíveis, Outros).
+    *   Cálculo de Mão de Obra baseado em valor/hora e tempo gasto.
+    *   Rateio de Despesas Indiretas Fixas (Aluguel, Energia, Água, Internet, etc.) por hora de trabalho.
+    *   Cálculo de Depreciação de Equipamentos Duráveis baseado em valor, vida útil e uso na peça.
+    *   Aplicação de Impostos e Taxas percentuais (Venda, Plataforma, Pagamento).
+    *   Definição de Margem de Lucro percentual sobre o custo de produção.
+    *   Adição de Valor Artístico/Exclusividade (valor fixo opcional).
+*   **Gerenciamento de Equipamentos:**
+    *   Cadastro, edição e exclusão de equipamentos duráveis.
+    *   Cálculo automático da taxa de depreciação mensal por equipamento.
+    *   Importação e Exportação da lista de equipamentos (formato JSON).
+*   **Interface e Usabilidade:**
+    *   **Modo de Visualização Duplo:**
+        *   **Modo Completo:** Exibe todas as seções do formulário para preenchimento livre.
+        *   **Modo Passo-a-Passo (Wizard):** Guia o usuário seção por seção, ideal para iniciantes.
+    *   **Tooltips de Ajuda:** Ícones (?) ao lado de cada campo com explicações detalhadas sobre o que preencher.
+    *   **Cálculos Automáticos:** Os totais e o preço final são recalculados automaticamente conforme os valores são inseridos.
+    *   **Resumo Final:** Apresenta um sumário claro de todos os componentes do preço.
+    *   **Gráfico de Composição:** Visualização em gráfico de pizza da distribuição dos custos e lucro no preço final.
+    *   **Arredondamento:** Opção para arredondar o preço final sugerido para múltiplos comuns (R$ 0,50, R$ 1,00, R$ 5,00, etc.).
+*   **Gerenciamento de Dados:**
+    *   **Salvar/Carregar Cálculos:** Permite salvar os dados de um cálculo completo (inputs e resultados resumidos) e carregá-los posteriormente.
+    *   **Persistência Local:** Utiliza o `localStorage` do navegador para guardar cálculos salvos, lista de equipamentos e configurações.
+    *   **Exportar PDF:** Gera um relatório PDF detalhado do cálculo atual.
+    *   **Limpar Formulário:** Reseta todos os campos para os valores padrão.
+*   **Personalização:**
+    *   **Temas Visuais:** Vários temas pré-definidos (Claro, Escuro, Cobre, Oxidado) e opção de cores personalizadas.
+    *   **Configurações Gerais:**
+        *   Definir valores padrão para taxa horária, margem de lucro, taxas, arredondamento.
+        *   Controlar a visibilidade de cada seção principal no Modo Completo.
+        *   Configurar o comportamento inicial (abrir novo cálculo, último cálculo ou lista de salvos).
+        *   Definir limite máximo de cálculos salvos.
+*   **Backup e Restauração:**
+    *   Funcionalidade para exportar TODOS os dados da aplicação (configurações, cálculos, equipamentos) em um único arquivo JSON.
+    *   Funcionalidade para importar um arquivo de backup JSON, substituindo todos os dados atuais.
+    *   Opção para limpar completamente todos os dados armazenados no navegador.
+
+## 3. Como Usar
+
+1.  **Abra o arquivo `index_updated.html`** em um navegador web moderno (Chrome, Firefox, Edge, Safari).
+2.  **Escolha o Modo de Visualização (Opcional):**
+    *   Por padrão, a calculadora abre no **Modo Completo**.
+    *   Clique no botão "<i class="fas fa-magic"></i> Mudar para Modo Passo-a-Passo" para entrar no modo guiado (Wizard). Use os botões "Anterior" e "Próximo" para navegar entre as seções.
+    *   Clique em "<i class="fas fa-list-alt"></i> Mudar para Visão Completa" para retornar ao modo padrão.
+3.  **Preencha as Seções:**
+    *   Comece pelas **Informações da Peça** (Nome, Descrição).
+    *   Vá preenchendo os **Custos de Materiais**. Use os botões "+ Pedra", "+ Concha/Fóssil", etc., para adicionar múltiplos itens. Use o botão "x" para remover itens extras.
+    *   Informe o **Valor/Hora** desejado e o **Tempo Gasto** na seção **Mão de Obra**.
+    *   Preencha suas **Despesas Indiretas** mensais (Aluguel, Luz, etc.) e suas horas/dias de trabalho médios para calcular o custo fixo/hora.
+    *   **Gerencie Equipamentos:** Clique no botão "Gerenciar" (na seção Despesas Indiretas) para abrir o modal e cadastrar seus equipamentos duráveis (valor, vida útil). A depreciação será calculada. Informe os **Dias de Trabalho** e o **Fator de Uso** específicos para a peça atual.
+    *   Defina os percentuais de **Impostos e Taxas** aplicáveis.
+    *   Insira a **Margem de Lucro** desejada.
+    *   Se aplicável, adicione um **Valor Artístico** fixo.
+    *   Verifique o **Resumo Final**, o gráfico e escolha uma opção de **Arredondamento**.
+4.  **Use os Botões de Ação:**
+    *   **Salvar:** Guarda o cálculo atual para consulta futura (será solicitado um nome).
+    *   **Carregar:** Abre um modal com a lista de cálculos salvos para selecionar e carregar.
+    *   **Exportar PDF:** Gera um PDF com o detalhamento do cálculo atual.
+    *   **Limpar:** Reseta o formulário.
+5.  **Menu Principal (Ícone <i class="fas fa-bars"></i> no canto superior direito):**
+    *   **Gerenciar Equipamentos:** Acesso rápido ao modal de equipamentos.
+    *   **Alterar Tema:** Abre o modal para escolher temas visuais ou personalizar cores.
+    *   **Configurações:** Abre o modal para ajustar valores padrão, visibilidade de seções, etc.
+    *   **Ajuda / Documentação:** (Idealmente) Link para este arquivo ou um guia mais detalhado.
+
+**Dica:** Passe o mouse sobre os ícones de interrogação (<i class="fas fa-question-circle"></i>) ao lado dos campos para ver instruções detalhadas sobre cada um.
+
+## 4. Detalhes Técnicos (Para Desenvolvedores)
+
+### 4.1. Estrutura de Arquivos
+
+*   `index_updated.html`: Estrutura principal da página.
+*   `styles.css`: Estilos gerais da aplicação, layout, responsividade e modo Wizard.
+*   `modal-styles.css`: Estilos específicos para todos os modais (Equipamentos, Configurações, Temas, Salvos).
+*   `calculator-core.js`: Lógica central de cálculo, coleta de inputs, atualização da UI principal, gráfico (Chart.js), exportação PDF (jsPDF), salvar/carregar cálculos.
+*   `equipment.js`: Gerenciamento de equipamentos duráveis (modal, CRUD, cálculo de depreciação, injeção da seção no HTML).
+*   `settings.js`: Gerenciamento das configurações da aplicação (modal, CRUD, backup/restauração, aplicação das configurações).
+*   `themes.js`: Gerenciamento de temas visuais (modal, aplicação de temas, cores customizadas).
+*   `menu.js`: Criação e gerenciamento do menu principal dropdown.
+*   `wizard.js`: Lógica de controle para o modo Passo-a-Passo (Wizard).
+*   `integration.js`: Ponto de entrada principal que inicializa todos os outros módulos JavaScript na ordem correta e configura listeners globais.
+
+### 4.2. Tecnologias Utilizadas
+
+*   **HTML5:** Estrutura semântica da página.
+*   **CSS3:** Estilização, layout (Flexbox e Grid), variáveis CSS (para temas), responsividade (Media Queries), animações básicas.
+*   **JavaScript (ES6+):** Lógica da aplicação, manipulação do DOM, interações, cálculos, gerenciamento de estado local.
+*   **Chart.js:** Biblioteca para geração do gráfico de pizza na seção de resumo.
+*   **jsPDF:** Biblioteca para geração do relatório em PDF.
+*   **Font Awesome:** Biblioteca para ícones.
+*   **Google Fonts:** Para fontes personalizadas (Cinzel Decorative, Roboto).
+*   **LocalStorage:** Armazenamento de dados no navegador do cliente.
+
+### 4.3. Módulos JavaScript
+
+*   **`integration.js`:** Orquestra a inicialização. Garante que todos os módulos sejam carregados e inicializados na ordem correta. Configura listeners de eventos globais (como `input` no formulário principal) que disparam o recálculo.
+*   **`calculator-core.js`:** O "coração" dos cálculos. Contém:
+    *   `gatherInputs()`: Coleta os valores de todos os campos do formulário.
+    *   `performFullCalculation()`: Realiza a lógica de cálculo principal com base nos inputs.
+    *   `updateUI()`: Atualiza os campos de resultado e o resumo na interface.
+    *   `initializeChart()`, `updateChart()`: Gerencia o gráfico Chart.js.
+    *   `exportToPDF()`: Gera o relatório PDF.
+    *   Funções para salvar, carregar, listar e excluir cálculos (`saveCalculation`, `loadFormData`, `renderSavedCalculationsList`, etc.).
+    *   `runCalculationsAndUpdateUI()`: Função central chamada pelos eventos para orquestrar coleta, cálculo e atualização da UI.
+*   **`equipment.js`:** Responsável por tudo relacionado a equipamentos:
+    *   Array `equipamentosDuraveis` para guardar os dados.
+    *   Funções CRUD (`addNewEquipment`, `updateEquipment`, `deleteEquipment`).
+    *   Criação e gerenciamento do modal (`createEquipmentModal`, `setupEquipmentEventListeners`, `renderEquipmentList`).
+    *   Persistência no `localStorage` (`loadEquipmentFromStorage`, `saveEquipmentToStorage`).
+    *   Injeção da seção de depreciação no formulário principal (`addEquipmentSectionToCalculator`).
+    *   Cálculo do custo de depreciação por peça (`calculateEquipmentCostForPiece`).
+    *   Import/Export específico para equipamentos.
+*   **`settings.js`:** Gerencia as configurações globais:
+    *   Objeto `defaultSettings` e `currentSettings`.
+    *   Criação e gerenciamento do modal de configurações com abas.
+    *   Persistência no `localStorage`.
+    *   `applyCurrentSettings()`: Aplica as configurações salvas (ex: visibilidade das seções).
+    *   Funções de Backup/Restauração/Limpeza geral (`exportAllData`, `importAllData`, `clearAllData`).
+*   **`themes.js`:** Lida com a aparência:
+    *   Gerencia o tema atual (`currentTheme`) e cores personalizadas (`customThemeColors`).
+    *   Criação e gerenciamento do modal de temas.
+    *   `applyTheme()`: Adiciona/remove classes CSS no `<body>` e define variáveis CSS customizadas.
+    *   Persistência do tema/cores no `localStorage`.
+    *   `addThemeStylesToHead()`: Injeta estilos CSS base para os temas e previews.
+*   **`menu.js`:** Cria o botão de menu e o dropdown, lida com o posicionamento correto na tela e direciona as ações selecionadas para as funções correspondentes em outros módulos.
+*   **`wizard.js`:** Controla o modo passo-a-passo:
+    *   Mantém o estado (`isWizardMode`, `currentStepIndex`).
+    *   Define a ordem das seções (`wizardSectionsOrder`).
+    *   Mostra/esconde as seções e os botões de navegação do wizard (`updateWizardView`).
+    *   Lida com a troca entre os modos Wizard e Completo.
+
+### 4.4. Estrutura CSS
+
+*   **Variáveis CSS (`:root`)**: Usadas extensivamente para cores e fontes, permitindo fácil customização e theming.
+*   **`styles.css`**: Contém os estilos gerais, layout principal, estilos dos componentes do formulário, modo Wizard e responsividade geral.
+*   **`modal-styles.css`**: Estilos dedicados aos modais para mantê-los consistentes e separados dos estilos principais.
+*   **Seletores Descendentes e Classes**: Usados para estilizar componentes específicos (ex: `.form-section h2`, `.dynamic-item .remove-item`).
+*   **Flexbox e Grid**: Utilizados para layout, especialmente nos `.form-group`, `.dynamic-item` (Grid no desktop, Flex no mobile) e `action-buttons`.
+*   **Responsividade**: Media queries (`@media`) são usadas para ajustar o layout, tamanhos de fonte e espaçamentos para diferentes tamanhos de tela (breakpoints em 768px e 480px).
+*   **Pseudo-elementos (`::before`, `::after`)**: Usados para detalhes visuais como a seta do tooltip e as previews de tema.
+*   **Animações/Transições**: Transições CSS suaves são usadas para feedback visual (hover em botões, abertura de modais, dropdown, fade-in do wizard).
+
+## 5. Configuração e Personalização
+
+*   **Temas:** Acesse o menu principal (<i class="fas fa-bars"></i>) -> "Alterar Tema". Escolha um tema pré-definido ou marque "Personalizar Cores" para ajustar as cores primária, secundária e de destaque. Clique em "Aplicar Cores" para salvar o tema personalizado.
+*   **Configurações:** Acesse o menu principal (<i class="fas fa-bars"></i>) -> "Configurações".
+    *   **Cálculos Padrão:** Defina os valores que serão preenchidos automaticamente ao limpar o formulário ou iniciar um novo cálculo.
+    *   **Interface:** Marque/desmarque as seções que deseja ver no Modo Completo. Defina qual tela deve aparecer ao abrir a calculadora.
+    *   **Armazenamento:** Defina o número máximo de cálculos a serem mantidos na lista de salvos.
+
+## 6. Gerenciamento de Dados
+
+*   **Armazenamento:** Todos os dados (cálculos salvos, equipamentos, configurações, tema) são armazenados no `localStorage` do seu navegador. Limpar os dados do navegador para este site removerá tudo.
+*   **Salvar/Carregar:** Use os botões na parte inferior para salvar o cálculo atual ou carregar um cálculo previamente salvo.
+*   **Backup:** Na aba "Armazenamento" das Configurações, use "Exportar Tudo" para baixar um arquivo `.json` com todos os seus dados. Guarde este arquivo em local seguro.
+*   **Restauração:** Na mesma aba, use "Importar Tudo" para carregar um arquivo `.json` de backup. **Atenção:** Isso substituirá todos os dados atuais.
+*   **Limpeza Geral:** Use o botão "Limpar TODOS os Dados" (com cuidado!) para apagar completamente todas as informações salvas pela calculadora no seu navegador. **Esta ação é irreversível.**
+
+## 7. Melhorias Futuras Possíveis
+
+*   Fator de Perda de Material.
+*   Banco de Dados/Cadastro de Materiais reutilizáveis.
+*   Templates de Cálculo.
+*   Cálculo de Preço Atacado vs. Varejo.
+*   Permitir reordenar itens dinâmicos.
+*   Upload de imagem da peça.
+*   Simulador "What-If".
+*   Relatórios simples sobre cálculos salvos.
+
+## 8. Executando Localmente
+
+1.  Certifique-se de que todos os arquivos (`.html`, `.css`, `.js`) estejam na mesma pasta.
+2.  Abra o arquivo `index_updated.html` diretamente em um navegador web moderno.
+
+## 9. Licença
+
+(Defina aqui a licença de uso, ex: MIT License, ou indique que é para uso pessoal/proprietário).

@@ -1,0 +1,111 @@
+/* modal-styles.css */
+/* Estilos para todos os modais */
+
+/* Fundo e Transição */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.65); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
+.modal:not(.hidden) { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s linear 0s; }
+
+/* Conteúdo */
+.modal-content { background-color: var(--card-color); color: var(--text-color); border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); width: 90%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; transform: scale(0.95); transition: transform 0.3s ease; }
+.modal:not(.hidden) .modal-content { transform: scale(1); }
+.modal-content.large { max-width: 800px; }
+.modal-content.small { max-width: 450px; }
+
+/* Cabeçalho */
+.modal-header { padding: 12px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: var(--secondary-color); color: #ffffff; }
+.modal-header h2 { margin: 0; font-size: 1.2rem; font-weight: 500; color: inherit; }
+.close-modal { font-size: 26px; font-weight: bold; line-height: 1; color: rgba(255, 255, 255, 0.7); background: none; border: none; cursor: pointer; padding: 0 5px; transition: color 0.2s ease; }
+.close-modal:hover { color: white; }
+
+/* Corpo e Rodapé */
+.modal-body { padding: 20px; overflow-y: auto; flex-grow: 1; background-color: var(--card-color); }
+.modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; background-color: var(--background-color); }
+
+/* Abas */
+.settings-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); }
+.tab-button { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; color: var(--text-color); opacity: 0.7; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: opacity 0.2s, border-color 0.2s, color 0.2s; font-size: 0.95rem; font-weight: 500; }
+.tab-button:hover { opacity: 1; color: var(--primary-color); }
+.tab-button.active { opacity: 1; border-bottom-color: var(--primary-color); color: var(--primary-dark); }
+.tab-pane { display: none; } .tab-pane.active { display: block; }
+
+/* Formulários dentro de Modais */
+.modal .form-group { margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.modal .form-group label { flex-basis: 150px; flex-grow: 1; font-weight: 500; margin-right: 10px; font-size: 0.9rem; }
+.modal .form-group input[type="text"], .modal .form-group input[type="number"], .modal .form-group input[type="color"], .modal .form-group select { flex-basis: 200px; flex-grow: 2; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--card-color); color: var(--text-color); font-size: 0.95rem; }
+.modal .form-group input:focus, .modal .form-group select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px var(--primary-light); outline: none; }
+.modal .form-group.checkbox { flex-wrap: nowrap; align-items: center; }
+.modal .form-group.checkbox label { flex-basis: auto; margin-right: 0; margin-left: 5px; order: 2; font-weight: normal; font-size: 0.9rem; }
+.modal .form-group.checkbox input[type="checkbox"] { flex-basis: auto; flex-grow: 0; order: 1; margin-right: 5px; width: auto; cursor: pointer;}
+.modal .form-row { display: flex; gap: 15px; flex-wrap: wrap; width: 100%; align-items: flex-end; }
+.modal .form-row .form-group { flex: 1; min-width: 100px; margin-bottom: 0; }
+.modal .form-row .form-group label { margin-bottom: 3px; display: block; flex-basis: auto; }
+.modal .form-row .form-group input, .modal .form-row .form-group select { width: 100%; }
+
+/* Layout Equipamentos */
+#equipment-modal .form-group label[for="equipment-name"] { flex-basis: 80px; flex-grow: 0; }
+#equipment-modal .form-group input#equipment-name { flex-basis: 0; flex-grow: 3; }
+#equipment-modal .form-row { gap: 20px; }
+#equipment-modal .form-row .form-group { min-width: 120px; }
+
+/* Listas */
+.modal .list-header, .modal .equipment-item, .modal .saved-item { display: grid; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--border-color); align-items: center; font-size: 0.9rem; }
+.modal .list-header { font-weight: 600; background-color: var(--background-color); }
+/* Grid Equipamentos */
+.modal .equipment-list .list-header, .modal .equipment-list .equipment-item { grid-template-columns: minmax(150px, 3fr) 1.2fr 1.5fr 1.5fr 1fr; }
+.modal .equipment-list span[class*="col-"] { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 0; }
+.modal .equipment-list .col-value, .modal .equipment-list .col-monthly { text-align: right; }
+.modal .equipment-list .col-lifespan { text-align: center; }
+.modal .equipment-list .col-actions { text-align: right; }
+/* Grid Cálculos Salvos */
+.modal #saved-list .saved-item { grid-template-columns: 1fr auto; cursor: pointer; transition: background-color 0.2s ease; }
+.modal #saved-list .saved-item:hover { background-color: var(--primary-light); color: var(--card-color); }
+.modal #saved-list .saved-item.selected { background-color: var(--primary-color); color: white; font-weight: bold; }
+.modal .action-button-icon { background: none; border: none; color: var(--primary-color); cursor: pointer; padding: 5px; font-size: 1rem; opacity: 0.8; transition: opacity 0.2s, color 0.2s; }
+.modal .action-button-icon:hover { opacity: 1; color: var(--primary-dark); }
+.modal .action-button-icon.delete-equipment:hover { color: var(--error-color); }
+.modal .empty-list { padding: 20px; text-align: center; color: #888; font-style: italic; }
+.modal .equipment-summary, .modal .backup-options, .modal .data-management { margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--border-color); }
+.modal .backup-options, .modal .data-management { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* Botões Secundários (Arredondados) */
+.modal .secondary-button {
+    background-color: var(--secondary-color); color: white; border: none;
+    padding: 10px 20px;
+    border-radius: 5px; /* <<< CANTO ARREDONDADO APLICADO */
+    cursor: pointer; font-size: 0.95rem; display: inline-flex;
+    align-items: center; justify-content: center; text-align: center;
+    transition: background-color 0.3s ease, opacity 0.2s ease; opacity: 0.9;
+}
+.modal .secondary-button:hover { opacity: 1; }
+.modal .secondary-button i { margin-right: 8px; }
+
+/* Botão Limpar Dados (usando classes existentes) */
+.modal #clear-all-data.action-button.error {
+    padding: 10px 20px; /* Garante padding igual aos outros botões */
+    font-size: 0.95rem; /* Garante fonte igual */
+    /* A cor já vem da classe .error */
+}
+
+
+/* Seção de Temas (Modal) */
+.theme-options { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; justify-content: center; }
+.theme-option { text-align: center; cursor: pointer; padding: 10px; border: 2px solid transparent; border-radius: 6px; transition: border-color 0.2s ease, background-color 0.2s ease; background-color: var(--background-color); min-width: 120px; }
+.theme-option:hover { border-color: var(--primary-light); background-color: var(--card-color); }
+.theme-option.selected { border-color: var(--primary-color); font-weight: bold; background-color: var(--card-color); }
+.theme-preview { width: 100px; height: 60px; border-radius: 8px; margin: 0 auto 10px auto; border: 1px solid var(--border-color); position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.1); background-color: var(--preview-bg, #eee); }
+.theme-preview::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 15px; background-color: var(--preview-header-bg, #e0e0e0); border-top-left-radius: 6px; border-top-right-radius: 6px; border-bottom: 1px solid var(--border-color); }
+.theme-preview::after { content: ''; position: absolute; top: 25px; left: 10px; width: 30px; height: 20px; border-radius: 4px; background-color: var(--preview-accent-bg, #cccccc); }
+/* Cores específicas das previews estão no themes.js -> addThemeStylesToHead */
+
+.custom-colors-toggle { margin-bottom: 15px; }
+#theme-modal #toggle-custom-colors { margin-right: 5px; }
+.color-customization { display: none; padding: 15px; border: 1px dashed var(--border-color); border-radius: 5px; margin-top: 10px; background-color: var(--background-color); }
+#toggle-custom-colors:checked ~ .color-customization { display: block; }
+.color-customization .form-group label { flex-basis: 120px; font-size: 0.9rem;}
+.color-customization .form-group input[type="color"] { flex-basis: 60px; flex-grow: 0; height: 35px; padding: 2px; border-radius: 4px; border: 1px solid var(--border-color); cursor: pointer; }
+.color-customization .form-group button { margin-top: 10px; margin-right: 10px; }
+.color-customization .form-group button:last-child { margin-right: 0; }
+
+/* Responsividade */
+@media (max-width: 768px) { .modal-content { width: 95%; max-height: 95vh; } .modal-header h2 { font-size: 1.1rem; } .modal-body, .modal-header, .modal-footer { padding: 15px; } .modal .form-group { flex-direction: column; align-items: stretch; gap: 5px; } .modal .form-group label { flex-basis: auto; margin-bottom: 3px; } .modal .form-group input, .modal .form-group select { flex-basis: auto; width: 100%; } .modal .equipment-list .list-header, .modal .equipment-list .equipment-item { grid-template-columns: minmax(100px, 2fr) 1fr 1fr; } .modal .col-value, .modal .col-lifespan { display: none; } .modal #saved-list .saved-item { grid-template-columns: 1fr; text-align: center; } .modal #saved-list .saved-item span { display: block; margin-top: 5px; } .theme-options { gap: 10px; } .theme-option { min-width: 100px; padding: 8px; } .theme-preview { width: 80px; height: 50px; } }
+@media (max-width: 480px) { .modal-footer { flex-direction: column; gap: 8px; } .modal-footer button { width: 100%; justify-content: center; } .settings-tabs { flex-direction: column; border-bottom: none; } .tab-button { border-bottom: 1px solid var(--border-color); margin-bottom: 0; text-align: left; } .tab-button.active { border-bottom: 2px solid var(--primary-color); } .modal .equipment-list .list-header, .modal .equipment-list .equipment-item { grid-template-columns: 1fr auto; } .modal .col-monthly, .modal .col-value, .modal .col-lifespan { display: none; } .theme-option { flex: 1 1 45%; } }

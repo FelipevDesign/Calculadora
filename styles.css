@@ -1,0 +1,550 @@
+/* styles.css */
+/* Estilos Gerais */
+:root {
+    /* MANTENHA SUAS VARIÁVEIS DE TEMA FUNCIONAIS AQUI */
+    --primary-color: #b87333; --primary-dark: #8c5823; --primary-light: #d4a76a;
+    --secondary-color: #2c3e50; --accent-color: #3498db;
+    --background-color: #f9f9f9; --card-color: #ffffff; --text-color: #333333;
+    --border-color: #e0e0e0; --success-color: #2ecc71; --warning-color: #f39c12;
+    --error-color: #e74c3c;
+    --font-main: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-title: 'Cinzel Decorative', 'Georgia', serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-main); line-height: 1.6; color: var(--text-color); background-color: var(--background-color); }
+.container { max-width: 900px; margin: 20px auto; padding: 20px; }
+
+/* Cabeçalho */
+header {
+    position: relative;
+    text-align: center; margin-bottom: 30px; padding: 30px 20px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: #ffffff;
+    border-radius: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+header h1 {
+    margin: 0; font-family: var(--font-title); font-size: 2.5rem; font-weight: 700;
+    color: #ffffff !important;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Container Menu */
+.header-actions { position: absolute; top: 15px; right: 15px; z-index: 1050; }
+.menu-button { background-color: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; box-shadow: none; transition: background-color 0.3s, transform 0.2s; }
+.menu-button:hover { background-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+.menu-button:active { transform: scale(0.98); }
+
+/* Dropdown Menu */
+.menu-dropdown {
+    position: absolute;
+    background-color: var(--card-color);
+    color: var(--text-color);
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    z-index: 1040;
+    min-width: 240px;
+    overflow: hidden;
+    padding: 6px 0;
+    border: 1px solid var(--border-color);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-5px) scale(0.98);
+    transition: opacity 0.15s ease-out, visibility 0s linear 0.15s, transform 0.15s ease-out;
+}
+.menu-dropdown:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    transition: opacity 0.15s ease-out, visibility 0s linear 0s, transform 0.15s ease-out;
+}
+.menu-list { list-style: none; padding: 0; margin: 0; }
+.menu-item { padding: 10px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; font-size: 0.95rem; white-space: nowrap; }
+.menu-item:hover { background-color: var(--primary-color); color: white; }
+.menu-item i.fa-fw { color: var(--primary-color); transition: color 0.2s ease; font-size: 1.1em; text-align: center; width: 1.2em; }
+.menu-item:hover i.fa-fw { color: white; }
+
+/* Instruções (Bloco Geral) */
+.instructions { background-color: var(--card-color); padding: 15px 20px; margin-bottom: 25px; border-radius: 6px; border-left: 5px solid var(--primary-color); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); color: var(--text-color); font-size: 0.95rem; }
+.instructions p { display: flex; align-items: center; gap: 10px; }
+.instructions i { color: var(--primary-color); font-size: 1.2em; }
+
+/* Seções e Subseções */
+.form-section { margin-bottom: 30px; padding: 25px; border-radius: 8px; background-color: var(--card-color); border: 1px solid var(--border-color); box-shadow: 0 3px 6px rgba(0, 0, 0, 0.07); transition: box-shadow 0.3s ease; }
+.form-section:focus-within { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+.form-section h2 { font-size: 1.4rem; color: var(--primary-dark); margin-top: 0; margin-bottom: 25px; padding-bottom: 12px; border-bottom: 2px solid var(--primary-light); display: flex; align-items: center; font-weight: 500; }
+.form-section h2 i { margin-right: 12px; font-size: 1.1em; color: var(--primary-color); }
+.subsection { margin-bottom: 25px; padding: 20px; background-color: var(--background-color); border-radius: 6px; border: 1px solid var(--border-color); }
+.subsection:last-of-type { margin-bottom: 15px; }
+.subsection h3 { color: var(--secondary-color); margin-top: 0; margin-bottom: 18px; font-size: 1.15rem; font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+
+/* Grupos de Formulário e Inputs */
+.form-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center; /* Alinha label e wrapper/input verticalmente */
+    gap: 5px 10px;
+}
+.form-group label {
+    flex: 1 1 180px;
+    margin-right: 10px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    align-self: center; /* Garante alinhamento com wrapper/input */
+}
+/* Wrapper para input+tooltip (usado apenas onde há tooltip) */
+.input-with-tooltip {
+    display: flex;
+    align-items: center;
+    flex: 2 1 250px; /* Ocupa o espaço do input original */
+    gap: 5px; /* Espaço entre input e tooltip */
+    min-width: 150px; /* Evita encolher demais */
+}
+/* Input/Select/Textarea DENTRO do wrapper */
+.input-with-tooltip input,
+.input-with-tooltip select,
+.input-with-tooltip textarea {
+    flex-grow: 1; /* Input cresce para preencher o wrapper */
+    width: auto; /* Largura automática controlada pelo flex */
+    min-width: 50px; /* Mínimo */
+}
+/* Input/Select/Textarea FORA do wrapper (caso não tenha tooltip) */
+.form-group > input:not(:first-child), /* Seleciona input que NÃO é primeiro filho (label é) */
+.form-group > select:not(:first-child),
+.form-group > textarea:not(:first-child) {
+    flex: 2 1 250px; /* Mantém o estilo original */
+}
+
+/* Estilo padrão para todos os inputs/selects/textareas */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: var(--card-color);
+    color: var(--text-color);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+textarea { min-height: 60px; resize: vertical; }
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+input[type="number"] { text-align: right; }
+
+/* Tooltips (Ícones de Ajuda) */
+.tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    color: var(--primary-color);
+    cursor: help;
+    flex-shrink: 0; /* Não encolher */
+    align-self: center;
+    /* margin-left removido, controlado pelo gap */
+}
+.input-with-tooltip .tooltip {
+    margin-left: 0; /* Sem margem extra dentro do wrapper */
+}
+
+.tooltip i {
+    font-size: 0.95em;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+.tooltip:hover i {
+    opacity: 1;
+}
+.tooltip .tooltiptext {
+    visibility: hidden; width: 240px; max-width: calc(100vw - 40px);
+    background-color: var(--secondary-color); color: #ffffff; text-align: left;
+    border-radius: 6px; padding: 10px 14px; position: absolute; z-index: 10;
+    bottom: 140%; left: 50%; transform: translateX(-50%); opacity: 0;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    font-size: 0.82rem; line-height: 1.45; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+}
+.tooltip .tooltiptext::after {
+    content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px;
+    border-width: 6px; border-style: solid; border-color: var(--secondary-color) transparent transparent transparent;
+}
+.tooltip:hover .tooltiptext { visibility: visible; opacity: 1; transition: opacity 0.3s ease; }
+
+/* --- Itens Dinâmicos - Layout GRID Desktop --- */
+.dynamic-item {
+    display: grid;
+    grid-template-columns: auto minmax(60px, 1fr) auto auto minmax(80px, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 8px 10px;
+    align-items: center;
+    padding: 15px 45px 15px 15px;
+    margin-bottom: 10px;
+    background-color: var(--background-color);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+.dynamic-item:last-child { margin-bottom: 0; }
+
+.dynamic-item .form-group { display: contents; margin: 0; padding: 0; }
+
+.dynamic-item label,
+.dynamic-item input,
+.dynamic-item .tooltip {
+    font-size: 0.85rem; margin: 0; display: flex; align-items: center;
+}
+.dynamic-item label { white-space: nowrap; padding-right: 5px; }
+.dynamic-item input {
+    font-size: 0.9rem; padding: 6px 8px; width: 100%; border: 1px solid var(--border-color);
+    border-radius: 4px; background-color: var(--card-color); color: var(--text-color); min-width: 50px;
+}
+.dynamic-item .tooltip { padding-left: 4px; justify-self: start; }
+.dynamic-item .tooltip i { font-size: 0.9em; }
+.dynamic-item .tooltip .tooltiptext { width: 200px; font-size: 0.78rem; padding: 8px 10px; }
+
+/* Posicionamento Específico no Grid Desktop */
+.dynamic-item .form-group:first-of-type label { grid-column: 1 / 2; grid-row: 1 / 2; }
+.dynamic-item .form-group:first-of-type input { grid-column: 2 / 6; grid-row: 1 / 2; }
+.dynamic-item .form-group:first-of-type .tooltip { grid-column: 6 / 7; grid-row: 1 / 2; justify-self: end; }
+.dynamic-item .form-group:nth-of-type(2) label { grid-column: 1 / 2; grid-row: 2 / 3; }
+.dynamic-item .form-group:nth-of-type(2) input { grid-column: 2 / 3; grid-row: 2 / 3; text-align: right;}
+.dynamic-item .form-group:nth-of-type(2) .tooltip { grid-column: 3 / 4; grid-row: 2 / 3; }
+.dynamic-item .form-group:nth-of-type(3) label { grid-column: 4 / 5; grid-row: 2 / 3; }
+.dynamic-item .form-group:nth-of-type(3) input { grid-column: 5 / 6; grid-row: 2 / 3; text-align: right;}
+.dynamic-item .form-group:nth-of-type(3) .tooltip { grid-column: 6 / 7; grid-row: 2 / 3; }
+/* ------------------------------------- */
+
+.remove-item {
+    background-color: var(--error-color); color: white; border: none; border-radius: 50%;
+    width: 26px; height: 26px; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; position: absolute; top: 6px; right: 6px;
+    font-size: 0.8rem; line-height: 1; transition: background-color 0.2s ease, transform 0.2s ease;
+    z-index: 20;
+}
+.remove-item:hover { background-color: var(--primary-dark); transform: scale(1.1); }
+.remove-item i { pointer-events: none; }
+
+/* Botões Adicionar */
+.add-button { background-color: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin: 15px 0 10px 0; display: inline-flex; align-items: center; transition: background-color 0.3s ease, transform 0.1s ease; }
+.add-button i { margin-right: 6px; }
+.add-button:hover { background-color: var(--primary-dark); }
+.add-button:active { transform: scale(0.98); }
+
+/* Resultados e Totais */
+.result-group { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 10px 15px; background-color: var(--background-color); border: 1px solid var(--border-color); border-radius: 4px; margin-top: 15px; font-size: 0.95rem; gap: 5px; }
+.result-group:first-of-type { margin-top: 10px; }
+.result-group label { font-weight: 500; margin-right: 10px; color: var(--text-color); }
+.result-group span { font-weight: 600; color: var(--primary-dark); text-align: right; }
+.result-group .tooltip { margin-left: auto; padding-left: 10px; }
+
+.total-section { background-color: var(--primary-light); color: var(--card-color); font-size: 1.05rem; font-weight: 600; border-color: var(--primary-dark); margin-top: 20px; padding: 12px 15px;}
+.total-section label { color: inherit; }
+.total-section span { color: inherit; font-weight: 700; }
+
+/* Seção Final */
+#price-calculator .form-section[data-section="final-price"] { background-color: var(--secondary-color); color: #f0f0f0; border: none; }
+#price-calculator .form-section[data-section="final-price"] h2 { color: white; border-bottom-color: var(--primary-light); }
+.summary-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-bottom: 25px; font-size: 0.9rem; }
+.summary-item { background-color: rgba(255, 255, 255, 0.08); padding: 10px 15px; border-radius: 4px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border: 1px solid rgba(255, 255, 255, 0.2); gap: 5px;}
+.summary-item label { opacity: 0.9; margin-right: 10px; }
+.summary-item span { font-weight: 600; }
+.summary-item .tooltip { color: rgba(255,255,255,0.8); margin-left: auto; padding-left: 10px;}
+.summary-item .tooltip i { font-size: 0.9em; }
+.summary-item.total { background-color: var(--primary-color); color: white; font-size: 1.05rem; font-weight: 700; grid-column: 1 / -1; border: none; }
+.summary-item.total .tooltip { color: rgba(255,255,255,0.9); }
+
+.chart-container { background-color: var(--card-color); padding: 20px; border-radius: 8px; margin: 25px 0; height: 300px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+#price-chart { max-height: 100%; }
+.rounded-price { background-color: var(--accent-color); color: white; font-size: 1.2rem; padding: 15px 20px; margin-top: 20px; text-align: center; border-radius: 5px; display: flex; flex-direction: column; align-items: center; }
+.rounded-price label { display: block; font-weight: 500; margin-bottom: 5px; color: inherit; }
+.rounded-price span { font-size: 1.6rem; font-weight: 700; color: inherit; }
+
+/* Botões Ação Globais */
+.action-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color); justify-content: center; }
+.action-button { background-color: var(--primary-color); color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; text-align: center; transition: background-color 0.3s ease, box-shadow 0.2s ease, transform 0.1s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.action-button i { margin-right: 8px; font-size: 1.1em; }
+.action-button:hover { background-color: var(--primary-dark); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+.action-button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.action-button.warning { background-color: var(--warning-color); }
+.action-button.warning:hover { background-color: #e67e22; }
+.action-button.error { background-color: var(--error-color); }
+.action-button.error:hover { background-color: #c0392b; }
+.action-button.success { background-color: var(--success-color); }
+.action-button.success:hover { background-color: #27ae60; }
+
+/* Botão Gerenciar Equipamentos (Formulário Principal) */
+.equipment-summary-form button.secondary-button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+.equipment-summary-form button.secondary-button i {
+    margin-right: 5px;
+}
+
+
+/* Classe Utilitária */
+.hidden { display: none !important; }
+p.note {font-size: 0.8em; margin-top: 5px; text-align: right; opacity: 0.8;}
+
+/* Rodapé */
+footer { text-align: center; margin-top: 40px; padding: 20px; color: #888; font-size: 0.9rem; border-top: 1px solid var(--border-color); }
+
+
+/* --- Estilos do Wizard --- */
+
+/* Botão de alternância de modo */
+.view-mode-toggle {
+    text-align: center;
+    margin-bottom: 25px;
+}
+#toggle-view-mode.secondary-button {
+    background-color: var(--secondary-color);
+    color: white;
+    opacity: 0.9;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+#toggle-view-mode.secondary-button:hover {
+    opacity: 1;
+}
+#toggle-view-mode i {
+    margin-right: 8px;
+}
+
+/* Controle das seções no modo Wizard */
+body.wizard-active #price-calculator .form-section {
+    display: none;
+    margin-bottom: 15px;
+}
+body.wizard-active #price-calculator .form-section.wizard-active-section {
+    display: block;
+    animation: fadeInWizard 0.5s ease-out;
+}
+body.wizard-active #price-calculator .form-section:not(.wizard-active-section) #equipment-depreciation-placeholder,
+body.wizard-active #price-calculator .form-section:not(.wizard-active-section) #equipment-depreciation-section {
+    display: none !important;
+}
+body.wizard-active #price-calculator .form-section:not(.wizard-active-section) .chart-container {
+     display: none !important;
+}
+
+/* Container de navegação do Wizard */
+#wizard-navigation {
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Esconde botões de ação globais no modo wizard */
+ body.wizard-active #global-actions {
+    display: none;
+}
+
+/* Ajuste para botões de navegação do wizard */
+#wizard-navigation button {
+    padding: 10px 20px;
+    font-size: 1rem;
+}
+#wizard-navigation button i {
+    font-size: 1em;
+}
+#wizard-navigation button#wizard-prev i {
+     margin-right: 8px;
+}
+#wizard-navigation button#wizard-next i {
+     margin-left: 8px;
+}
+
+/* Animação de entrada suave para a seção */
+@keyframes fadeInWizard {
+    from {
+        opacity: 0.3;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container { padding: 15px; }
+    header h1 { font-size: 1.8rem; }
+    .form-section { padding: 20px; }
+    .form-section h2 { font-size: 1.3rem; margin-bottom: 20px; }
+    .subsection { padding: 15px; }
+    .subsection h3 { font-size: 1.1rem; margin-bottom: 15px; }
+
+    /* --- Layout Mobile Geral --- */
+    .form-group {
+        flex-direction: column; /* Label sempre acima */
+        align-items: stretch;
+        gap: 3px; /* Espaço menor entre label e input/wrapper */
+        margin-bottom: 15px; /* Margem entre grupos */
+    }
+    .form-group label {
+        flex-basis: auto;
+        margin-bottom: 3px;
+        min-width: auto;
+        margin-right: 0;
+        text-align: left; /* Garante alinhamento */
+    }
+    /* Wrapper do input+tooltip no mobile */
+    .input-with-tooltip {
+        display: flex;      /* Usa Flexbox */
+        align-items: center;/* Alinha input e tooltip */
+        width: 100%;        /* Ocupa toda a largura */
+        gap: 8px;           /* Espaço entre input e tooltip */
+        flex: 1 1 auto;     /* Garante que ele preencha o espaço no form-group */
+    }
+    .input-with-tooltip input,
+    .input-with-tooltip select,
+    .input-with-tooltip textarea {
+        flex-grow: 1;        /* Input/Select cresce */
+        width: auto;         /* Largura controlada pelo flex */
+        min-width: 0;        /* Permite encolher */
+        font-size: 0.95rem;
+        padding: 8px 10px;
+    }
+    .input-with-tooltip .tooltip {
+        margin: 0;           /* Remove margens padrão do tooltip */
+        align-self: center;
+    }
+    /* Inputs que NÃO têm tooltip */
+    .form-group > input:not(:first-child),
+    .form-group > select:not(:first-child),
+    .form-group > textarea:not(:first-child) {
+        width: 100%; /* Ocupam toda a largura se sozinhos */
+        flex-basis: auto;
+        font-size: 0.95rem;
+        padding: 8px 10px;
+    }
+
+
+    /* --- Layout Mobile para Itens Dinâmicos (Sobrescreve Grid) --- */
+    .dynamic-item {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 40px 12px 12px;
+    }
+     .dynamic-item .form-group {
+        display: flex;
+        flex-direction: row; /* Label, Input, Tooltip na mesma linha */
+        flex-wrap: nowrap;
+        align-items: center;
+        width: 100%;
+        flex-basis: auto;
+     }
+      .dynamic-item .form-group label {
+         flex-basis: 55px; /* Label um pouco maior */
+         flex-grow: 0;
+         flex-shrink: 0;
+         margin-bottom: 0;
+         white-space: nowrap;
+      }
+     .dynamic-item .form-group input {
+         flex-grow: 1;
+         flex-shrink: 1;
+         width: auto;
+         font-size: 0.9rem;
+         padding: 6px 8px;
+     }
+     .dynamic-item .form-group .tooltip {
+         margin-left: 5px;
+         margin-top: 0;
+         align-self: center;
+     }
+     /* Linha 1 */
+     .dynamic-item .form-group:first-of-type { margin-bottom: 8px; }
+      .dynamic-item .form-group:first-of-type .tooltip { margin-left: auto; }
+      /* Linha 2 */
+      .dynamic-item .form-group:nth-of-type(2),
+      .dynamic-item .form-group:nth-of-type(3) {
+           width: calc(50% - 5px);
+           flex-basis: auto;
+      }
+      .dynamic-item .form-group:nth-of-type(2) { padding-right: 5px; }
+       .dynamic-item .form-group:nth-of-type(3) { padding-left: 5px; }
+
+
+    .remove-item { width: 26px; height: 26px; top: 5px; right: 5px; font-size: 0.8rem; z-index: 20;}
+    .summary-container { grid-template-columns: 1fr; gap: 10px; }
+    .summary-item { padding: 10px 12px; }
+    .action-buttons { flex-direction: column; gap: 10px; }
+    .action-button { width: 100%; padding: 12px; }
+    .header-actions { top: 10px; right: 10px; }
+    .menu-button { width: 36px; height: 36px; font-size: 16px; }
+
+    .tooltip .tooltiptext {
+        width: 200px;
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+}
+@media (max-width: 480px) {
+    header { padding: 20px 15px; }
+    header h1 { font-size: 1.6rem; }
+    .menu-dropdown { min-width: 200px; }
+    .menu-item { padding: 8px 15px; gap: 10px; font-size: 0.9rem;}
+    .container { padding: 10px; }
+    .form-section { padding: 15px; }
+    .form-section h2 { font-size: 1.2rem; margin-bottom: 15px; }
+    .form-section h2 i { margin-right: 8px; }
+    .subsection { padding: 12px; }
+    .subsection h3 { font-size: 1.05rem; margin-bottom: 12px; }
+    .result-group { padding: 8px 10px; font-size: 0.9rem; }
+    .total-section { font-size: 1rem; padding: 10px 12px; }
+    .rounded-price { font-size: 1.1rem; padding: 12px; }
+    .rounded-price span { font-size: 1.4rem; }
+    .action-button { padding: 10px; font-size: 0.95rem; }
+
+    #wizard-navigation {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #wizard-navigation button {
+        width: 100%;
+         padding: 12px;
+    }
+    .remove-item { width: 24px; height: 24px; top: 4px; right: 4px; font-size: 0.75rem; z-index: 20;}
+    .dynamic-item { padding-right: 35px; }
+     /* Ajuste Mobile Extremo para Itens Dinâmicos */
+     .dynamic-item .form-group { width: 100%; } /* Garante coluna */
+      .dynamic-item .form-group:nth-of-type(2),
+      .dynamic-item .form-group:nth-of-type(3) { width: 100%; padding: 0;}
+
+    /* Ajuste tooltip mobile */
+    .tooltip .tooltiptext {
+         bottom: 125%;
+         top: auto;
+         left: 50%;
+         transform: translateX(-50%);
+         width: 180px;
+         font-size: 0.75rem;
+    }
+    .tooltip .tooltiptext::after {
+         top: 100%;
+         border-color: var(--secondary-color) transparent transparent transparent;
+         margin-left: -6px;
+    }
+     .dynamic-item .form-group .tooltip .tooltiptext {
+        width: 160px;
+    }
+}

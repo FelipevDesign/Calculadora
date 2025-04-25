@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Rocharts - Precificação de Joias</title>
+    <!-- Google Font Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="modal-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body class="light-theme"> <!-- Classe inicial, JS pode alterar -->
+     <header>
+    <h1>Calculadora Rocharts</h1>
+    <div class="header-actions">
+        <!-- Menu será injetado aqui -->
+    </div>
+    <!-- ===== User Info / Logout ===== -->
+    <div class="user-session" style="position: absolute; top: 15px; left: 15px; color: white; font-size: 0.8em;">
+        <span id="user-display"></span>
+        <button id="logout-button" class="secondary-button" style="display: none; margin-left: 10px; padding: 3px 8px; font-size: 0.75em;">Sair</button>
+    </div>
+    <!-- ============================ -->
+</header>
+
+    <div class="container">
+        <div class="instructions">
+            <p><i class="fas fa-info-circle"></i> Preencha os campos abaixo. Os cálculos são atualizados automaticamente.</p>
+        </div>
+
+        <!-- ===== BOTÃO DE ALTERNÂNCIA DE MODO ===== -->
+        <div class="view-mode-toggle">
+            <button type="button" id="toggle-view-mode" class="secondary-button">
+                <i class="fas fa-magic"></i> Mudar para Modo Passo-a-Passo
+            </button>
+        </div>
+        <!-- ====================================== -->
+
+        <div id="price-calculator">
+            <!-- 1. Informações da Peça -->
+            <div class="form-section" data-section="piece-info">
+                <h2><i class="fas fa-gem"></i> Informações da Peça</h2>
+                <div class="form-group">
+                    <label for="piece-name">Nome:</label>
+                    <!-- Sem tooltip, não precisa de wrapper -->
+                    <input type="text" id="piece-name" placeholder="Ex: Colar de Cobre Entalhado">
+                </div>
+                <div class="form-group">
+                    <label for="piece-description">Descrição: (opcional)</label>
+                    <!-- Sem tooltip, não precisa de wrapper (mas poderia ter se quisesse) -->
+                    <textarea id="piece-description" rows="3"></textarea>
+                </div>
+            </div>
+            <!-- 2. Custos de Materiais -->
+             <div class="form-section" data-section="materials">
+                 <h2><i class="fas fa-weight-hanging"></i> Custos de Materiais</h2>
+                 <div class="subsection">
+                     <h3>Cobre</h3>
+                     <div class="form-group">
+                         <label for="copper-weight">Peso (g):</label>
+                         <div class="input-with-tooltip"> <!-- WRAPPER -->
+                             <input type="number" id="copper-weight" min="0" step="0.1">
+                             <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Peso total de cobre usado na peça (em gramas). Use ponto ou vírgula para decimais (ex: 15.5 ou 15,5).</span></div>
+                         </div>
+                     </div>
+                     <div class="form-group">
+                         <label for="copper-price">Preço/g (R$):</label>
+                         <div class="input-with-tooltip"> <!-- WRAPPER -->
+                            <input type="number" id="copper-price" min="0" step="0.01">
+                            <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Quanto você pagou por cada grama de cobre? (Custo do material / Peso total comprado). Ex: 0.15 (15 centavos).</span></div>
+                         </div>
+                     </div>
+                     <div class="result-group"> <label>Cobre:</label> <span id="copper-total-cost">R$ 0,00</span> </div>
+                 </div>
+                 <div class="subsection"> <!-- Itens dinâmicos não usam wrapper -->
+                     <h3>Pedras</h3>
+                     <div id="gemstones-container"> <div class="dynamic-item gemstone-item"> <div class="form-group"> <label>Tipo:</label> <input type="text" class="gemstone-type" placeholder="Ex: Turquesa"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Nome ou tipo da pedra (ametista, quartzo rosa, etc.).</span></div> </div> <div class="form-group"> <label>Qtd:</label> <input type="number" class="gemstone-quantity quantity" value="1" min="1"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Quantas pedras *deste* tipo foram usadas?</span></div> </div> <div class="form-group"> <label>Preço Unit.:</label> <input type="number" class="gemstone-price" min="0" step="0.01"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Qual foi o custo de *cada* pedra individual?</span></div> </div> <button type="button" class="remove-item" title="Remover"><i class="fas fa-times"></i></button> </div> </div>
+                     <button type="button" id="add-gemstone" class="add-button"><i class="fas fa-plus"></i> Pedra</button>
+                     <div class="result-group"> <label>Pedras:</label> <span id="gemstones-total-cost">R$ 0,00</span> </div>
+                 </div>
+                 <div class="subsection"> <!-- Itens dinâmicos não usam wrapper -->
+                     <h3>Conchas/Fósseis</h3>
+                     <div id="shells-container"> <div class="dynamic-item shell-item"> <div class="form-group"> <label>Tipo:</label> <input type="text" class="shell-type" placeholder="Ex: Concha Búzio"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Descrição da concha, fóssil, madeira, semente, etc.</span></div> </div> <div class="form-group"> <label>Qtd:</label> <input type="number" class="shell-quantity quantity" value="1" min="1"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Quantos itens *deste* tipo?</span></div> </div> <div class="form-group"> <label>Preço Unit.:</label> <input type="number" class="shell-price" min="0" step="0.01"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Custo individual de cada item.</span></div> </div> <button type="button" class="remove-item" title="Remover"><i class="fas fa-times"></i></button> </div> </div>
+                     <button type="button" id="add-shell" class="add-button"><i class="fas fa-plus"></i> Concha/Fóssil</button>
+                     <div class="result-group"> <label>Conchas/Fósseis:</label> <span id="shells-total-cost">R$ 0,00</span> </div>
+                 </div>
+                 <div class="subsection" id="disposable-materials-section"> <!-- Itens dinâmicos não usam wrapper -->
+                     <h3>Consumíveis</h3>
+                     <div id="disposable-materials-container"> <div class="dynamic-item disposable-item"> <div class="form-group"> <label>Descrição:</label> <input type="text" class="disposable-desc" placeholder="Ex: Lixa 400 (1/4 folha)"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Item que se gasta durante a produção (lixas, gás, ácido, escovas, etc.). Seja específico na descrição.</span></div> </div> <div class="form-group"> <label>Qtd:</label> <input type="number" class="disposable-quantity quantity" value="1" min="0"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Quantidade usada *nesta peça*. Pode ser fração (use ponto/vírgula), ex: 0.25 para 1/4 de lixa.</span></div> </div> <div class="form-group"> <label>Preço Unit.:</label> <input type="number" class="disposable-price" min="0" step="0.01"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Custo da unidade completa do consumível (ex: preço da folha inteira de lixa, do tubo de gás). A calculadora multiplicará pelo campo 'Qtd'.</span></div> </div> <button type="button" class="remove-item" title="Remover"><i class="fas fa-times"></i></button> </div> </div>
+                     <button type="button" id="add-disposable-material" class="add-button"><i class="fas fa-plus"></i> Consumível</button>
+                     <div class="result-group"> <label>Consumíveis:</label> <span id="disposables-total-cost">R$ 0,00</span> </div>
+                 </div>
+                 <div class="subsection"> <!-- Itens dinâmicos não usam wrapper -->
+                     <h3>Outros</h3>
+                     <div id="other-materials-container"> <div class="dynamic-item other-material-item"> <div class="form-group"> <label>Descrição:</label> <input type="text" class="other-material-desc" placeholder="Ex: Fio de Nylon (50cm)"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Qualquer outro material que não se encaixou acima (fios, fechos, argolas, embalagem específica da peça, etc.).</span></div> </div> <div class="form-group"> <label>Qtd:</label> <input type="number" class="other-material-quantity quantity" value="1" min="1"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Quantidade usada *nesta peça*.</span></div> </div> <div class="form-group"> <label>Preço Unit.:</label> <input type="number" class="other-material-price" min="0" step="0.01"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Custo unitário do material (ex: preço do metro de fio, do fecho).</span></div> </div> <button type="button" class="remove-item" title="Remover"><i class="fas fa-times"></i></button> </div> </div>
+                     <button type="button" id="add-other-material" class="add-button"><i class="fas fa-plus"></i> Outro</button>
+                     <div class="result-group"> <label>Outros:</label> <span id="other-materials-total-cost">R$ 0,00</span> </div>
+                 </div>
+                 <div class="result-group total-section"> <label>Total Materiais:</label> <span id="materials-total-cost">R$ 0,00</span> </div>
+             </div>
+            <!-- 3. Mão de Obra -->
+             <div class="form-section" data-section="labor">
+                 <h2><i class="fas fa-user-clock"></i> Mão de Obra</h2>
+                 <div class="form-group">
+                     <label for="hourly-rate">Valor Hora (R$):</label>
+                     <div class="input-with-tooltip"> <!-- WRAPPER -->
+                        <input type="number" id="hourly-rate" min="0" step="0.01">
+                        <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Defina quanto você deseja que seja o valor da sua hora trabalhada neste projeto. Considere seus custos, experiência e o valor do seu trabalho. Ex: 30.00</span> </div>
+                     </div>
+                 </div>
+                 <div class="form-group">
+                     <label for="work-hours">Tempo (horas):</label>
+                     <div class="input-with-tooltip"> <!-- WRAPPER -->
+                        <input type="number" id="work-hours" min="0" step="0.1">
+                        <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Informe o tempo total, em horas, gasto para produzir esta peça (incluindo planejamento, execução, acabamento, limpeza, etc.). Use ponto ou vírgula para decimais (ex: 3.5 para 3h30min).</span> </div>
+                     </div>
+                 </div>
+                 <div class="result-group total-section"> <label>Mão de Obra:</label> <span id="labor-cost">R$ 0,00</span> </div>
+             </div>
+             <!-- 4. Despesas Indiretas -->
+             <div class="form-section" data-section="expenses">
+                 <h2><i class="fas fa-file-invoice-dollar"></i> Despesas Indiretas</h2>
+                 <div class="subsection">
+                     <h3>Custos Fixos/Hora</h3>
+                     <div class="form-group"> <label for="rent">Aluguel/Mês (R$):</label> <div class="input-with-tooltip"><input type="number" id="rent" min="0" step="0.01" value="0"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Custo mensal do aluguel do seu espaço de trabalho (ou uma % proporcional se usar espaço de casa). Deixe 0 se não aplicável.</span></div></div> </div>
+                     <div class="form-group"> <label for="electricity">Energia/Mês (R$):</label> <div class="input-with-tooltip"><input type="number" id="electricity" min="0" step="0.01" value="0"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Valor médio mensal da conta de energia elétrica atribuível ao seu trabalho.</span></div></div> </div>
+                     <div class="form-group"> <label for="water">Água/Mês (R$):</label> <div class="input-with-tooltip"><input type="number" id="water" min="0" step="0.01" value="0"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Valor médio mensal da conta de água atribuível ao seu trabalho.</span></div></div> </div>
+                     <div class="form-group"> <label for="internet">Internet/Mês (R$):</label> <div class="input-with-tooltip"><input type="number" id="internet" min="0" step="0.01" value="0"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Custo mensal da internet (ou % proporcional).</span></div></div> </div>
+                     <div class="form-group"> <label for="other-fixed-expenses">Outros Fixos/Mês (R$):</label> <div class="input-with-tooltip"><input type="number" id="other-fixed-expenses" min="0" step="0.01" value="0"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Some aqui outros custos fixos mensais relacionados ao negócio (telefone, software, contador, MEI, etc.).</span></div></div> </div>
+                     <div class="result-group"> <label>Total Fixos/Mês:</label> <span id="monthly-fixed-expenses-total">R$ 0,00</span> </div> <hr style="margin: 15px 0;">
+                     <div class="form-group"> <label for="daily-hours">Horas/Dia Trab.:</label> <div class="input-with-tooltip"><input type="number" id="daily-hours" min="1" step="0.5" value="8"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Em média, quantas horas por dia você dedica ao trabalho com artesanato (produção, vendas, admin, etc.)?</span></div></div> </div>
+                     <div class="form-group"> <label for="monthly-days">Dias/Mês Trab.:</label> <div class="input-with-tooltip"><input type="number" id="monthly-days" min="1" step="1" value="20"> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Em média, quantos dias por mês você trabalha efetivamente?</span></div></div> </div>
+                     <div class="result-group"> <label>Total Horas/Mês:</label> <span id="monthly-hours-total">160 horas</span> </div>
+                     <div class="result-group"> <label>Custo Fixo/Hora:</label> <span id="hourly-fixed-expenses">R$ 0,00</span> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Calculado: Total de Custos Fixos Mensais dividido pelo Total de Horas Trabalhadas no Mês.</span></div> </div>
+                     <div class="result-group"> <label>Custo Fixo (Peça):</label> <span id="piece-fixed-expenses">R$ 0,00</span> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Calculado: Custo Fixo por Hora multiplicado pelo Tempo Gasto na Peça (em horas). Representa a fatia dos custos fixos alocada a esta peça.</span></div> </div>
+                 </div>
+                 <div id="equipment-depreciation-placeholder">
+                     <!-- Seção Equipamentos Injetada Aqui -->
+                     <!-- Wrapper precisa ser adicionado em equipment.js -->
+                 </div>
+                 <div class="result-group total-section"> <label>Total Desp. Indiretas:</label> <span id="indirect-expenses-total">R$ 0,00</span> </div>
+             </div>
+             <!-- 5. Impostos e Taxas -->
+             <div class="form-section" data-section="taxes">
+                 <h2><i class="fas fa-percentage"></i> Impostos e Taxas (%)</h2>
+                 <div class="form-group">
+                     <label for="sales-tax">Imposto Venda (%):</label>
+                     <div class="input-with-tooltip"> <!-- WRAPPER -->
+                        <input type="number" id="sales-tax" min="0" max="100" step="0.1" value="0">
+                        <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Percentual de imposto que incide sobre o valor da venda (ex: 4% para Simples Nacional anexo I). Consulte seu contador. Deixe 0 se isento ou informal.</span> </div>
+                     </div>
+                 </div>
+                 <div class="form-group">
+                     <label for="platform-fee">Taxa Plataforma (%):</label>
+                     <div class="input-with-tooltip"> <!-- WRAPPER -->
+                        <input type="number" id="platform-fee" min="0" max="100" step="0.1" value="0">
+                        <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Se vender em marketplace (Elo7, Etsy, etc.), qual a comissão em % cobrada por eles? Ex: 12 ou 18 para Elo7. Deixe 0 se venda direta.</span> </div>
+                     </div>
+                 </div>
+                 <div class="form-group">
+                     <label for="payment-fee">Taxa Pagamento (%):</label>
+                     <div class="input-with-tooltip"> <!-- WRAPPER -->
+                         <input type="number" id="payment-fee" min="0" max="100" step="0.1" value="0">
+                         <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Taxa percentual do meio de pagamento (PagSeguro, Mercado Pago, etc.). Verifique a taxa para a forma de pagamento mais comum (ex: 4.99 para crédito à vista). Deixe 0 se não aplicável.</span> </div>
+                     </div>
+                 </div>
+                 <div class="result-group total-section"> <label>Valor Taxas (Estimado):</label> <span id="taxes-total">R$ 0,00</span> </div> <p class="note">* Estimativa sobre Custo+Lucro+Artístico.</p>
+             </div>
+            <!-- 6. Margem de Lucro -->
+             <div class="form-section" data-section="profit">
+                 <h2><i class="fas fa-chart-line"></i> Margem de Lucro</h2>
+                 <div class="form-group">
+                     <label for="profit-percentage">Margem Lucro (%):</label>
+                     <div class="input-with-tooltip"> <!-- WRAPPER -->
+                        <input type="number" id="profit-percentage" min="0" value="100">
+                        <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Percentual que você quer adicionar sobre o CUSTO DE PRODUÇÃO como lucro. 100% = Dobrar o custo (Lucro = Custo). 200% = Triplicar o custo (Lucro = 2x Custo).</span> </div>
+                     </div>
+                 </div>
+                 <div class="result-group total-section"> <label>Valor Lucro:</label> <span id="profit-value">R$ 0,00</span> </div>
+             </div>
+             <!-- 7. Valor Artístico -->
+             <div class="form-section" data-section="artistic">
+                 <h2><i class="fas fa-paint-brush"></i> Valor Artístico/Exclusividade (Opcional)</h2>
+                 <div class="form-group">
+                     <label for="artistic-value-add">Adicional Fixo (R$):</label>
+                     <div class="input-with-tooltip"> <!-- WRAPPER -->
+                        <input type="number" id="artistic-value-add" min="0" step="1" value="0">
+                        <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Valor fixo (em R$) para adicionar ao preço final devido à exclusividade, complexidade técnica, design inovador ou valor artístico percebido da peça. Use com critério.</span> </div>
+                     </div>
+                 </div>
+                 <div class="result-group total-section"> <label>Adicional Artístico:</label> <span id="artistic-adjustment">R$ 0,00</span> </div>
+             </div>
+             <!-- 8. Resumo e Preço Final -->
+             <div class="form-section" data-section="final-price">
+                 <h2><i class="fas fa-dollar-sign"></i> Resumo e Preço Final</h2>
+                 <div class="summary-container">
+                     <div class="summary-item"><label>Materiais:</label> <span id="summary-materials">R$ 0,00</span></div>
+                     <div class="summary-item"><label>Mão de Obra:</label> <span id="summary-labor">R$ 0,00</span></div>
+                     <div class="summary-item"><label>Desp. Indiretas:</label> <span id="summary-expenses">R$ 0,00</span></div>
+                     <div class="summary-item total"><label>Custo Produção:</label> <span id="summary-cost">R$ 0,00</span><div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Custo total para produzir a peça (Materiais + Mão de Obra + Despesas Indiretas).</span></div></div>
+                     <div class="summary-item"><label>Lucro:</label> <span id="summary-profit">R$ 0,00</span></div>
+                     <div class="summary-item"><label>Adic. Artístico:</label> <span id="summary-artistic">R$ 0,00</span></div>
+                     <div class="summary-item"><label>Taxas (Est.):</label> <span id="summary-taxes">R$ 0,00</span></div>
+                     <div class="summary-item total"><label>Preço Base:</label> <span id="final-price-value">R$ 0,00</span> <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Soma de Custo + Lucro + Adicional Artístico + Taxas Estimadas (antes do arredondamento).</span></div></div>
+                 </div>
+                 <div class="chart-container" data-section="chart">
+                      <canvas id="price-chart"></canvas>
+                 </div>
+                 <div class="form-group">
+                     <label for="round-price">Arredondar para:</label>
+                     <div class="input-with-tooltip"> <!-- WRAPPER -->
+                         <select id="round-price">
+                             <option value="none">Não arredondar</option>
+                             <option value="0.5">R$ 0,50</option>
+                             <option value="1">R$ 1,00</option>
+                             <option value="5">R$ 5,00</option>
+                             <option value="10" selected>R$ 10,00</option>
+                             <option value="50">R$ 50,00</option>
+                             <option value="100">R$ 100,00</option>
+                         </select>
+                         <div class="tooltip"> <i class="fas fa-question-circle"></i> <span class="tooltiptext">Arredonda o preço final para o múltiplo mais próximo (sempre para CIMA) para facilitar a venda. Ex: 123.45 arredondado para R$ 10,00 vira 130.00.</span></div>
+                     </div>
+                 </div>
+                 <div class="result-group total-section rounded-price">
+                     <label>Preço Final Sugerido:</label>
+                     <span id="rounded-price">R$ 0,00</span>
+                 </div>
+             </div>
+        </div> <!-- Fim #price-calculator -->
+
+        <!-- ===== NAVEGAÇÃO DO WIZARD (Inicialmente oculta) ===== -->
+        <div id="wizard-navigation" class="action-buttons hidden">
+            <button type="button" id="wizard-prev" class="action-button warning">
+                <i class="fas fa-chevron-left"></i> Anterior
+            </button>
+            <button type="button" id="wizard-next" class="action-button success">
+                Próximo <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        <!-- =============================================== -->
+
+
+        <!-- Botões de Ação Globais -->
+        <div class="action-buttons" id="global-actions"> <!-- Adiciona ID para controle -->
+            <button type="button" id="save-calculation" class="action-button"> <i class="fas fa-save"></i> Salvar </button>
+            <button type="button" id="load-calculation" class="action-button"> <i class="fas fa-folder-open"></i> Carregar </button>
+            <button type="button" id="export-pdf" class="action-button success"> <i class="fas fa-file-pdf"></i> Exportar PDF </button>
+            <button type="button" id="clear-form" class="action-button warning"> <i class="fas fa-trash"></i> Limpar </button>
+        </div>
+
+        <!-- Modal de Cálculos Salvos -->
+         <div id="saved-calculations-modal" class="modal hidden">
+              <div class="modal-content">
+                 <div class="modal-header"> <h2>Cálculos Salvos</h2> <span class="close-modal" data-modal-id="saved-calculations-modal">×</span> </div>
+                 <div class="modal-body"> <div id="saved-list"> <p class="empty-list">Nenhum cálculo salvo.</p> </div> </div>
+                 <div class="modal-footer">
+                      <button type="button" id="load-selected-calculation" class="action-button"> <i class="fas fa-folder-open"></i> Carregar </button>
+                     <button type="button" id="delete-selected-calculation" class="action-button error"> <i class="fas fa-trash"></i> Excluir </button>
+                 </div>
+             </div>
+         </div>
+
+         <!-- Outros Modais (Equipamentos, Temas, Configurações) serão criados/adicionados pelo JS -->
+
+    </div> <!-- Fim .container -->
+
+    <footer>
+        <p>Calculadora Rocharts © 2025</p>
+    </footer>
+
+    <!-- Scripts JS (ordem importante) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="themes.js"></script>
+    <script src="equipment.js"></script> <!-- Edite este arquivo para add tooltips e wrapper -->
+    <script src="settings.js"></script>
+    <script src="calculator-core.js"></script>
+    <script src="menu.js"></script>
+    <script src="wizard.js"></script>
+    
+    <!-- Scripts JS (ordem importante) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- ===== Firebase Scripts ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+    <script src="firebase-init.js"></script> <!-- Suas chaves -->
+    <script src="auth.js"></script> <!-- Lógica de Auth -->
+    <!-- ============================ -->
+
+    <script src="themes.js"></script>
+    <script src="equipment.js"></script>
+    <script src="settings.js"></script>
+    <script src="calculator-core.js"></script>
+    <script src="menu.js"></script>
+    <script src="wizard.js"></script>
+    <script src="integration.js"></script> <!-- DEVE SER O ÚLTIMO -->
+
+</body>
+</html>

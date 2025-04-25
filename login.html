@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Calculadora Rocharts</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Reutiliza estilos básicos -->
+    <style>
+        /* Estilos simples para centralizar */
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .auth-container { background-color: var(--card-color); padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; width: 90%;}
+        .auth-container h2 { text-align: center; margin-bottom: 20px; color: var(--primary-dark); }
+        .auth-container .form-group { flex-direction: column; align-items: stretch; }
+        .auth-container label { margin-bottom: 5px; font-size: 0.9em;}
+        .auth-container input { width: 100%; }
+        .auth-container button { width: 100%; margin-top: 15px; }
+        .auth-container p { text-align: center; margin-top: 15px; font-size: 0.9em; }
+        .error-message { color: var(--error-color); font-size: 0.85em; text-align: center; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Login - Calculadora Rocharts</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Senha:</label>
+                <input type="password" id="login-password" required>
+            </div>
+            <button type="submit" class="action-button">Entrar</button>
+            <p class="error-message" id="login-error"></p>
+        </form>
+        <p>Não tem conta? <a href="signup.html">Cadastre-se</a></p>
+    </div>
+
+    <!-- Scripts Firebase (Adicionar depois) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+    <script src="firebase-init.js"></script> <!-- Script com suas chaves -->
+    <script src="auth.js"></script>      <!-- Script com a lógica de auth -->
+
+</body>
+</html>
