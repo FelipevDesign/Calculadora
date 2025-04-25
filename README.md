@@ -181,7 +181,7 @@ A aplicação funciona inteiramente no navegador do usuário, utilizando o `loca
 ## 8. Executando Localmente
 
 1.  Certifique-se de que todos os arquivos (`.html`, `.css`, `.js`) estejam na mesma pasta.
-2.  Abra o arquivo `index_updated.html` diretamente em um navegador web moderno.
+2.  Abra o arquivo `index.html` diretamente em um navegador web moderno.
 
 ## 9. Licença
 
