@@ -48,7 +48,7 @@ A aplicação funciona inteiramente no navegador do usuário, utilizando o `loca
 
 ## 3. Como Usar
 
-1.  **Abra o arquivo `index_updated.html`** em um navegador web moderno (Chrome, Firefox, Edge, Safari).
+1.  **Abra o arquivo `index.html`** em um navegador web moderno (Chrome, Firefox, Edge, Safari).
 2.  **Escolha o Modo de Visualização (Opcional):**
     *   Por padrão, a calculadora abre no **Modo Completo**.
     *   Clique no botão "<i class="fas fa-magic"></i> Mudar para Modo Passo-a-Passo" para entrar no modo guiado (Wizard). Use os botões "Anterior" e "Próximo" para navegar entre as seções.
@@ -80,7 +80,7 @@ A aplicação funciona inteiramente no navegador do usuário, utilizando o `loca
 
 ### 4.1. Estrutura de Arquivos
 
-*   `index_updated.html`: Estrutura principal da página.
+*   `index.html`: Estrutura principal da página.
 *   `styles.css`: Estilos gerais da aplicação, layout, responsividade e modo Wizard.
 *   `modal-styles.css`: Estilos específicos para todos os modais (Equipamentos, Configurações, Temas, Salvos).
 *   `calculator-core.js`: Lógica central de cálculo, coleta de inputs, atualização da UI principal, gráfico (Chart.js), exportação PDF (jsPDF), salvar/carregar cálculos.
