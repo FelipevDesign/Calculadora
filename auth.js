@@ -105,7 +105,7 @@ if (typeof firebase === 'undefined' || !firebase.app()) {
         });
     }
 
-    // Listener do botão de Logout (no index_updated.html)
+    // Listener do botão de Logout (no index.html)
     if (logoutButton) {
         logoutButton.addEventListener('click', logoutUser);
     }
