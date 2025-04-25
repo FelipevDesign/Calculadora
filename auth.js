@@ -120,8 +120,8 @@ if (typeof firebase === 'undefined' || !firebase.app()) {
             if (currentPage === 'login.html' || currentPage === 'signup.html') {
                 // Se está logado e na página de login/cadastro, redireciona para a calculadora
                 console.log("Usuário logado, redirecionando para calculadora...");
-                window.location.href = 'index_updated.html';
-            } else if (currentPage === 'index_updated.html') {
+                window.location.href = 'index.html';
+            } else if (currentPage === 'index.html') {
                 // Está na página correta (calculadora)
                 // Atualiza a UI para mostrar info do usuário e botão de logout
                 if (userDisplay) userDisplay.textContent = `Logado como: ${user.email}`;
