@@ -15,7 +15,7 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
-// --- Inicialização do Firebase Admin SDK (v4 - Debug Variáveis Vercel) ---
+// --- Inicialização do Firebase Admin SDK (v5 - Log Values) ---
 if (!admin.apps.length) { // Verifica se já não foi inicializado
   let credential;
   let serviceAccount = null; // Inicia como null
@@ -30,18 +30,22 @@ if (!admin.apps.length) { // Verifica se já não foi inicializado
     // Se falhar localmente, tenta usar variáveis de ambiente (ambiente Vercel/produção)
     console.warn(`(${path.basename(__filename)}) [Debug] Chave local não encontrada (${localError.code || localError.message}). Tentando variáveis de ambiente...`);
 
-    // Log explícito das variáveis de ambiente que estamos procurando
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
     const privateKeyRaw = process.env.FIREBASE_PRIVATE_KEY; // Pega a chave "crua"
 
-    console.log(`(${path.basename(__filename)}) [Debug] process.env.FIREBASE_PROJECT_ID: ${projectId ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
-    console.log(`(${path.basename(__filename)}) [Debug] process.env.FIREBASE_CLIENT_EMAIL: ${clientEmail ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
-    console.log(`(${path.basename(__filename)}) [Debug] process.env.FIREBASE_PRIVATE_KEY: ${privateKeyRaw ? 'ENCONTRADO (verificar conteúdo)' : 'NÃO ENCONTRADO'}`);
+    // --- DETAILED VALUE LOGGING ---
+    console.log(`(${path.basename(__filename)}) [Debug Val] FIREBASE_PROJECT_ID: (${typeof projectId}) "${projectId}"`);
+    console.log(`(${path.basename(__filename)}) [Debug Val] FIREBASE_CLIENT_EMAIL: (${typeof clientEmail}) "${clientEmail}"`);
+    // Log only the start/end/length of the private key to avoid exposing it fully in logs
+    const pkSnippet = privateKeyRaw ? `${privateKeyRaw.substring(0, 20)}...${privateKeyRaw.substring(privateKeyRaw.length - 20)}` : 'N/A';
+    console.log(`(${path.basename(__filename)}) [Debug Val] FIREBASE_PRIVATE_KEY: (${typeof privateKeyRaw}) Length=${privateKeyRaw?.length || 0}, Snippet="${pkSnippet}"`);
+    // ------------------------------
 
-    // Verifica se TODAS as variáveis de ambiente necessárias existem
+
+    // Verifica se TODAS as variáveis de ambiente necessárias existem E têm valor (são "truthy")
     if (projectId && clientEmail && privateKeyRaw) {
-      console.log(`(${path.basename(__filename)}) [Debug] Inicializando Admin SDK com variáveis de ambiente FIREBASE_*`);
+      console.log(`(${path.basename(__filename)}) [Debug] Todas as variáveis encontradas e não vazias. Tentando criar credencial...`);
       try {
         credential = admin.credential.cert({
           projectId: projectId,
@@ -52,12 +56,16 @@ if (!admin.apps.length) { // Verifica se já não foi inicializado
          console.log(`(${path.basename(__filename)}) [Debug] admin.credential.cert() executado com sucesso.`);
       } catch(certError){
           console.error(`(${path.basename(__filename)}) [Debug] ERRO ao criar credencial com admin.credential.cert():`, certError);
-           throw new Error("Falha ao criar credencial do Firebase Admin a partir das variáveis de ambiente.");
+           throw new Error(`Falha ao criar credencial do Firebase Admin a partir das variáveis de ambiente: ${certError.message}`); // Include inner error
       }
     } else {
-      console.error(`(${path.basename(__filename)}) [Debug] Faltam variáveis de ambiente FIREBASE_*. Nenhuma credencial válida encontrada.`);
-      // Lança um erro se nenhuma credencial puder ser determinada
-      throw new Error("Nenhuma credencial do Firebase Admin encontrada (local ou via variáveis de ambiente FIREBASE_*).");
+      // Loga qual variável está faltando ou vazia
+       let missingVars = [];
+       if (!projectId) missingVars.push("FIREBASE_PROJECT_ID");
+       if (!clientEmail) missingVars.push("FIREBASE_CLIENT_EMAIL");
+       if (!privateKeyRaw) missingVars.push("FIREBASE_PRIVATE_KEY");
+      console.error(`(${path.basename(__filename)}) [Debug] ERRO: Variáveis ausentes/vazias: ${missingVars.join(', ')}. Nenhuma credencial válida encontrada.`);
+      throw new Error("Nenhuma credencial do Firebase Admin encontrada (variáveis de ambiente ausentes/vazias)."); // More specific error
     }
   }
 
@@ -70,9 +78,10 @@ if (!admin.apps.length) { // Verifica se já não foi inicializado
     throw new Error(`Falha na inicialização final do Firebase Admin: ${initError.message}`);
   }
 }
-// --------------------------------------------------------------------
+// --- FIM DO BLOCO DE INICIALIZAÇÃO ---
 
-const db = admin.firestore(); // Obtém instância do Firestore
+
+const db = admin.firestore(); // Obtém instância do Firestore (DEVE vir depois da inicialização)
 
 // Exporta a função manipuladora para Vercel
 module.exports = async (req, res) => {
@@ -133,10 +142,10 @@ module.exports = async (req, res) => {
     } else if (['PURCHASE_CANCELED', 'PURCHASE_REFUNDED', 'PURCHASE_CHARGEBACK', 'PURCHASE_EXPIRED', 'PURCHASE_BILLET_PRINTED'].includes(eventType) ||
                ['canceled', 'refunded', 'chargeback', 'expired', 'billet_printed'].includes(status) ) {
         console.log(`(hotmart-webhook) Desativando/Atualizando status para ${buyerEmail} devido a evento/status: ${eventType || status}`);
-         await userRef.set({
-           email: buyerEmail,
-           status: 'inactive',
-           transactionId: transactionId,
+         await userRef.set({ // Usa set com merge para garantir que o doc exista se o webhook de cancelamento chegar antes do de aprovação
+           email: buyerEmail, // Garante que o email esteja lá
+           status: 'inactive', // Marca como inativo
+           transactionId: transactionId, // Atualiza a transação relacionada
            lastWebhookEvent: eventType || 'N/A',
            lastWebhookTimestamp: admin.firestore.FieldValue.serverTimestamp()
          }, { merge: true });
