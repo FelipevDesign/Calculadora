@@ -42,7 +42,7 @@ if (typeof firebase === 'undefined' || !firebase.app()) {
             const userCredential = await auth.createUserWithEmailAndPassword(email, password);
             console.log("Usuário cadastrado no Firebase Auth:", userCredential.user);
             // Redireciona para a calculadora principal
-            window.location.href = 'index_updated.html';
+            window.location.href = 'index.html';
 
         } catch (error) {
             console.error("Erro durante cadastro ou verificação:", error);
@@ -60,7 +60,7 @@ if (typeof firebase === 'undefined' || !firebase.app()) {
         auth.signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 console.log("Usuário logado:", userCredential.user);
-                window.location.href = 'index_updated.html';
+                window.location.href = 'index.html';
             })
             .catch((error) => {
                 console.error("Erro no login:", error);
@@ -123,13 +123,13 @@ if (typeof firebase === 'undefined' || !firebase.app()) {
     // --- Verificador de Estado de Autenticação (sem mudanças) ---
     auth.onAuthStateChanged((user) => { /* ... como antes ... */
          console.log("Verificando estado de auth. Usuário:", user ? user.email : 'Nenhum');
-        const currentPage = window.location.pathname.split('/').pop() || 'index_updated.html'; // Default para index
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html'; // Default para index
 
         if (user) {
             if (currentPage === 'login.html' || currentPage === 'signup.html') {
                 console.log("Usuário logado, redirecionando para calculadora...");
-                window.location.href = 'index_updated.html';
-            } else if (currentPage === 'index_updated.html') {
+                window.location.href = 'index.html';
+            } else if (currentPage === 'index.html') {
                 if (userDisplay) userDisplay.textContent = `Logado como: ${user.email}`;
                 if (logoutButton) logoutButton.style.display = 'inline-block';
                  document.body.classList.add('user-logged-in');
