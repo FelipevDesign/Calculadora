@@ -16,35 +16,59 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
-// --- Inicialização do Firebase Admin SDK (Garantindo Instância Única) ---
+// --- Inicialização do Firebase Admin SDK (v4 - Debug Variáveis Vercel) ---
 if (!admin.apps.length) {
-  let serviceAccount;
+  let credential;
+  let serviceAccount = null; // Inicia como null
+
+  // Tenta carregar localmente primeiro
   try {
     const serviceAccountPath = path.resolve(__dirname, '../firebase-service-account.json');
-    console.log(`(verify-email) Tentando carregar credenciais de: ${serviceAccountPath}`);
     serviceAccount = require(serviceAccountPath);
-    console.log("(verify-email) Chave de serviço local carregada com sucesso.");
-  } catch (error) {
-    console.warn(`(verify-email) Não foi possível carregar a chave local (${error.code || error.message}). Tentando credenciais padrão (GOOGLE_APPLICATION_CREDENTIALS).`);
-    serviceAccount = null;
+    console.log(`(${path.basename(__filename)}) [Debug] Chave de serviço LOCAL carregada com sucesso.`);
+    credential = admin.credential.cert(serviceAccount);
+  } catch (localError) {
+    // Se falhar localmente, tenta usar variáveis de ambiente (ambiente Vercel/produção)
+    console.warn(`(${path.basename(__filename)}) [Debug] Chave local não encontrada (${localError.code || localError.message}). Tentando variáveis de ambiente...`);
+
+    // Log explícito das variáveis de ambiente que estamos procurando
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKeyRaw = process.env.FIREBASE_PRIVATE_KEY; // Pega a chave "crua"
+
+    console.log(`(${path.basename(__filename)}) [Debug] process.env.FIREBASE_PROJECT_ID: ${projectId ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
+    console.log(`(${path.basename(__filename)}) [Debug] process.env.FIREBASE_CLIENT_EMAIL: ${clientEmail ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
+    console.log(`(${path.basename(__filename)}) [Debug] process.env.FIREBASE_PRIVATE_KEY: ${privateKeyRaw ? 'ENCONTRADO (verificar conteúdo)' : 'NÃO ENCONTRADO'}`);
+
+    // Verifica se TODAS as variáveis de ambiente necessárias existem
+    if (projectId && clientEmail && privateKeyRaw) {
+      console.log(`(${path.basename(__filename)}) [Debug] Inicializando Admin SDK com variáveis de ambiente FIREBASE_*`);
+      try {
+        credential = admin.credential.cert({
+          projectId: projectId,
+          clientEmail: clientEmail,
+          // IMPORTANTE: Substitui '\\n' de volta para '\n' na chave privada
+          privateKey: privateKeyRaw.replace(/\\n/g, '\n'),
+        });
+         console.log(`(${path.basename(__filename)}) [Debug] admin.credential.cert() executado com sucesso.`);
+      } catch(certError){
+          console.error(`(${path.basename(__filename)}) [Debug] ERRO ao criar credencial com admin.credential.cert():`, certError);
+           throw new Error("Falha ao criar credencial do Firebase Admin a partir das variáveis de ambiente.");
+      }
+    } else {
+      console.error(`(${path.basename(__filename)}) [Debug] Faltam variáveis de ambiente FIREBASE_*. Nenhuma credencial válida encontrada.`);
+      // Lança um erro se nenhuma credencial puder ser determinada
+      throw new Error("Nenhuma credencial do Firebase Admin encontrada (local ou via variáveis de ambiente FIREBASE_*).");
+    }
   }
 
+  // Inicializa o app com a credencial determinada
   try {
-    const initOptions = {};
-    if (serviceAccount) {
-      console.log("(verify-email) Inicializando Admin SDK com chave de serviço local.");
-      initOptions.credential = admin.credential.cert(serviceAccount);
-    } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-       console.log("(verify-email) Inicializando Admin SDK com credenciais padrão (GOOGLE_APPLICATION_CREDENTIALS).");
-       initOptions.credential = admin.credential.applicationDefault();
-    } else {
-        throw new Error("Nenhuma credencial do Firebase Admin encontrada (nem local, nem GOOGLE_APPLICATION_CREDENTIALS).");
-    }
-    admin.initializeApp(initOptions);
-    console.log('(verify-email) Firebase Admin SDK inicializado com sucesso.');
-  } catch (error) {
-    console.error('!!! (verify-email) ERRO FATAL ao inicializar Firebase Admin SDK:', error);
-    throw new Error(`Falha na inicialização do Firebase Admin: ${error.message}`);
+    admin.initializeApp({ credential });
+    console.log(`(${path.basename(__filename)}) Firebase Admin SDK inicializado com sucesso.`);
+  } catch (initError) {
+    console.error(`!!! (${path.basename(__filename)}) ERRO FATAL na chamada final de initializeApp:`, initError);
+    throw new Error(`Falha na inicialização final do Firebase Admin: ${initError.message}`);
   }
 }
 // --------------------------------------------------------------------
