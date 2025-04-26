@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "firebase-admin": "^13.3.0"
+  },
+  "name": "calculadora",
+  "version": "1.0.0",
+  "description": "## 1. Visão Geral",
+  "main": "auth.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
