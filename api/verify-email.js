@@ -16,75 +16,48 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
-// --- Inicialização do Firebase Admin SDK (v8 - Corrigido + Log Decoded Key) ---
+// --- Inicialização do Firebase Admin SDK (v9 - JSON Direto da Vercel) ---
 if (!admin.apps.length) { // Verifica se já não foi inicializado
   let credential;
   let serviceAccount = null; // Inicia como null
 
-  // Tenta carregar localmente primeiro
+  // Tenta carregar localmente primeiro (para 'vercel dev')
   try {
     const serviceAccountPath = path.resolve(__dirname, '../firebase-service-account.json');
     serviceAccount = require(serviceAccountPath);
-    console.log(`(${path.basename(__filename)}) [Debug] Chave de serviço LOCAL carregada com sucesso.`);
+    console.log(`(${path.basename(__filename)}) [Debug] Usando chave de serviço LOCAL.`);
     credential = admin.credential.cert(serviceAccount);
   } catch (localError) {
-    // Se falhar localmente, tenta usar variáveis de ambiente (ambiente Vercel/produção)
-    console.warn(`(${path.basename(__filename)}) [Debug] Chave local não encontrada (${localError.code || localError.message}). Usando variáveis de ambiente...`);
+    // Se falhar localmente, tenta usar a variável de ambiente JSON (ambiente Vercel)
+    console.warn(`(${path.basename(__filename)}) [Debug] Chave local não encontrada (${localError.code || localError.message}). Usando variável de ambiente FIREBASE_SERVICE_ACCOUNT_JSON.`);
 
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL; // Linha corrigida
-    const privateKeyBase64 = process.env.FIREBASE_PRIVATE_KEY; // Pega a chave "crua"
+    const serviceAccountJSONString = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
-    // --- DETAILED VALUE LOGGING ---
-    console.log(`(${path.basename(__filename)}) [Debug Val] FIREBASE_PROJECT_ID: (${typeof projectId}) "${projectId}"`);
-    console.log(`(${path.basename(__filename)}) [Debug Val] FIREBASE_CLIENT_EMAIL: (${typeof clientEmail}) "${clientEmail}"`);
-    // Log only the start/end/length of the private key to avoid exposing it fully in logs
-    const pkSnippet = privateKeyBase64 ? `${privateKeyBase64.substring(0, 20)}...${privateKeyBase64.substring(privateKeyBase64.length - 20)}` : 'N/A';
-    console.log(`(${path.basename(__filename)}) [Debug Val] FIREBASE_PRIVATE_KEY (Base64): (${typeof privateKeyBase64}) Length=${privateKeyBase64?.length || 0}, Snippet="${pkSnippet}"`);
-    // ------------------------------
+    // Log para verificar se a variável JSON foi encontrada
+    console.log(`(${path.basename(__filename)}) [Debug Val] FIREBASE_SERVICE_ACCOUNT_JSON: ${serviceAccountJSONString ? 'ENCONTRADO (Verificar conteúdo)' : 'NÃO ENCONTRADO'}`);
 
-
-    // Verifica se TODAS as variáveis de ambiente necessárias existem E têm valor (são "truthy")
-    if (projectId && clientEmail && privateKeyBase64) {
-      console.log(`(${path.basename(__filename)}) [Debug] Todas as variáveis (Base64) encontradas e não vazias. Tentando decodificar e criar credencial...`);
-      let privateKeyDecoded; // Mover declaração para fora do try/catch
+    if (serviceAccountJSONString) {
+      console.log(`(${path.basename(__filename)}) [Debug] Variável FIREBASE_SERVICE_ACCOUNT_JSON encontrada. Tentando parsear...`);
       try {
-        // --- DECODIFICA A CHAVE PRIVADA BASE64 ---
-        privateKeyDecoded = Buffer.from(privateKeyBase64, 'base64').toString('utf8');
-        // -----------------------------------------
+        // Parseia a string JSON da variável de ambiente
+        const serviceAccountJSON = JSON.parse(serviceAccountJSONString);
 
-        // !!!!! TEMPORARY DEBUG LOG - REMOVE AFTER TEST !!!!!
-        console.log(`(${path.basename(__filename)}) [Debug Key] Chave Decodificada:\n${privateKeyDecoded}\n[Fim Chave Decodificada]`);
-        // !!!!! --------------------------------------- !!!!!
+        // !!!!! LOG PARA VER O JSON PARSEADO (TEMPORÁRIO - OPCIONAL) !!!!!
+        // console.log(`(${path.basename(__filename)}) [Debug JSON Parsed] Objeto parseado:`, JSON.stringify(serviceAccountJSON, null, 2));
+        // !!!!! ------------------------------------------ !!!!!
 
-        console.log(`(${path.basename(__filename)}) [Debug] Decodificação concluída. Tentando criar credencial...`);
-        credential = admin.credential.cert({
-          projectId: projectId,
-          clientEmail: clientEmail,
-          privateKey: privateKeyDecoded, // Usa a chave decodificada
-        });
-         console.log(`(${path.basename(__filename)}) [Debug] admin.credential.cert() executado com sucesso.`);
-
-      } catch(decodeOrCertError){
-          // Loga o erro, seja da decodificação ou do cert()
-          console.error(`(${path.basename(__filename)}) [Debug] ERRO durante decodificação ou criação de credencial:`, decodeOrCertError);
-          // Se o erro foi no cert(), privateKeyDecoded pode ter um valor, mas ser inválido
-          // Se foi no Buffer.from, privateKeyDecoded pode ser undefined
-          if (!privateKeyDecoded) {
-              console.error(`(${path.basename(__filename)}) [Debug] Falha ocorreu DURANTE a decodificação Base64.`);
-              throw new Error(`Falha ao decodificar FIREBASE_PRIVATE_KEY (Base64): ${decodeOrCertError.message}`);
-          } else {
-               console.error(`(${path.basename(__filename)}) [Debug] Falha ocorreu em admin.credential.cert() APÓS decodificação.`);
-               throw new Error(`Falha ao criar credencial do Firebase Admin (chave decodificada pode ser inválida): ${decodeOrCertError.message}`);
-          }
+        // Cria a credencial a partir do objeto JSON parseado
+        credential = admin.credential.cert(serviceAccountJSON);
+        console.log(`(${path.basename(__filename)}) [Debug] admin.credential.cert() executado com sucesso usando JSON da variável de ambiente.`);
+      } catch (parseOrCertError) {
+        console.error(`(${path.basename(__filename)}) [Debug] ERRO ao parsear JSON ou criar credencial a partir da variável de ambiente:`, parseOrCertError);
+        // Loga a string original para ajudar a depurar erros de JSON.parse
+        console.error(`(${path.basename(__filename)}) [Debug] String JSON recebida (início):`, serviceAccountJSONString?.substring(0, 100));
+        throw new Error(`Falha ao processar FIREBASE_SERVICE_ACCOUNT_JSON: ${parseOrCertError.message}`);
       }
     } else {
-       let missingVars = [];
-       if (!projectId) missingVars.push("FIREBASE_PROJECT_ID");
-       if (!clientEmail) missingVars.push("FIREBASE_CLIENT_EMAIL");
-       if (!privateKeyBase64) missingVars.push("FIREBASE_PRIVATE_KEY");
-      console.error(`(${path.basename(__filename)}) [Debug] ERRO: Variáveis (Base64) ausentes/vazias: ${missingVars.join(', ')}.`);
-      throw new Error("Nenhuma credencial do Firebase Admin encontrada (variáveis de ambiente Base64 ausentes/vazias).");
+      console.error(`(${path.basename(__filename)}) [Debug] ERRO: Variável de ambiente FIREBASE_SERVICE_ACCOUNT_JSON não encontrada.`);
+      throw new Error("Nenhuma credencial do Firebase Admin encontrada (nem local, nem variável JSON).");
     }
   }
 
@@ -103,7 +76,7 @@ if (!admin.apps.length) { // Verifica se já não foi inicializado
 }
 // --- FIM DO BLOCO DE INICIALIZAÇÃO ---
 
-const db = admin.firestore(); // Obtém instância do Firestore
+const db = admin.firestore(); // Obtém instância do Firestore (DEVE vir depois da inicialização)
 
 module.exports = async (req, res) => {
   // Permite apenas GET (para teste fácil) ou POST (mais seguro se enviar no corpo)
@@ -124,9 +97,12 @@ module.exports = async (req, res) => {
     // --- CONSULTA PELO CAMPO 'email' ---
     console.log(`(verify-email) Consultando Firestore: collection='authorizedUsers' ONDE campo 'email' == '${emailToVerify}'`);
     const usersRef = db.collection('authorizedUsers');
-    const querySnapshot = await usersRef.where('email', '==', emailToVerify).limit(1).get();
+    // Cria a query: seleciona documentos onde o campo 'email' é igual ao email fornecido
+    const querySnapshot = await usersRef.where('email', '==', emailToVerify).limit(1).get(); // limit(1) é uma otimização
 
+    // Verifica se a query retornou algum documento
     if (!querySnapshot.empty) {
+      // Pega o primeiro (e idealmente único) documento encontrado
       const docSnap = querySnapshot.docs[0];
       console.log(`(verify-email) Documento encontrado (ID: ${docSnap.id}). Dados:`, docSnap.data());
       const userData = docSnap.data();
@@ -138,9 +114,11 @@ module.exports = async (req, res) => {
         res.status(200).json({ authorized: true });
       } else {
         console.log(`(verify-email) Status NÃO é 'active' (${userData?.status}). Não autorizado.`);
+        // Mensagem mais genérica para o usuário final
         res.status(403).json({ authorized: false, message: 'Acesso não autorizado ou pendente.' });
       }
     } else {
+      // Nenhum documento encontrado com esse email
       console.log(`(verify-email) Nenhum documento encontrado com email ${emailToVerify}. Não autorizado.`);
       res.status(403).json({ authorized: false, message: 'Email não encontrado na lista de compradores.' });
     }
